@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DrinkMate - Visual Design</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a24;
+      --bg-elevated: #22222e;
+
+      --ring-gold: #d4a853;
+      --ring-gold-dark: #b8944a;
+      --ring-amber: #fbbf24;
+      --ring-orange: #f97316;
+      --ring-red: #f87171;
+      --ring-bg: rgba(255, 255, 255, 0.08);
+
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-tertiary: rgba(255, 255, 255, 0.4);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--ring-gold), var(--ring-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 18px;
+      margin-bottom: 60px;
+    }
+
+    .section {
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(to bottom, var(--ring-gold), var(--ring-amber));
+      border-radius: 2px;
+    }
+
+    /* Phone Mockup */
+    .phone-showcase {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .phone {
+      width: 375px;
+      height: 812px;
+      background: var(--bg-secondary);
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 30px;
+      background: var(--bg-primary);
+      border-radius: 15px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      border-radius: 32px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* App Content */
+    .app-header {
+      padding: 60px 24px 20px;
+      text-align: center;
+    }
+
+    .app-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .app-date {
+      font-size: 14px;
+      color: var(--text-tertiary);
+    }
+
+    /* Ring Component */
+    .ring-container {
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+      position: relative;
+    }
+
+    .ring {
+      width: 220px;
+      height: 220px;
+      position: relative;
+    }
+
+    .ring-bg {
+      fill: none;
+      stroke: var(--ring-bg);
+      stroke-width: 16;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke: url(#ringGradient);
+      stroke-width: 16;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: center;
+      transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ring-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 168, 83, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .ring-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ring-percentage {
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--ring-gold), var(--ring-amber));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+
+    .ring-label {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 24px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-unit {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      padding: 0 24px;
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .action-btn {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: var(--bg-elevated);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* Records List */
+    .records-section {
+      padding: 0 24px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .record-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .record-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-right: 12px;
+    }
+
+    .record-info {
+      flex: 1;
+    }
+
+    .record-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .record-detail {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .record-alcohol {
+      text-align: right;
+    }
+
+    .record-amount {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ring-gold);
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(26, 26, 36, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 24px calc(12px + env(safe-area-inset-bottom, 0));
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 16px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      transition: color 0.2s ease;
+    }
+
+    .nav-item.active {
+      color: var(--ring-gold);
+    }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+    }
+
+    /* FAB Button */
+    .fab-button {
+      position: absolute;
+      bottom: 90px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--ring-gold), var(--ring-amber));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 4px 15px rgba(212, 168, 83, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .fab-button:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow:
+        0 6px 25px rgba(212, 168, 83, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    }
+
+    .fab-icon {
+      width: 28px;
+      height: 28px;
+      color: #000;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .phone-showcase {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DrinkMate</h1>
+    <p class="subtitle">合上圆环 · 科学饮酒</p>
+
+    <div class="section">
+      <h2 class="section-title">App 首页设计</h2>
+
+      <div class="phone-showcase">
+        <!-- Phone 1: Main Screen -->
+        <div class="phone">
+          <div class="phone-screen">
+            <!-- SVG Gradients -->
+            <svg width="0" height="0">
+              <defs>
+                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#d4a853"/>
+                  <stop offset="100%" style="stop-color:#fbbf24"/>
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <!-- Header -->
+            <div class="app-header">
+              <div class="app-title">DrinkMate</div>
+              <div class="app-date">2026年4月20日 周日</div>
+            </div>
+
+            <!-- Ring -->
+            <div class="ring-container">
+              <div class="ring">
+                <svg viewBox="0 0 220 220" style="transform: rotate(-90deg)">
+                  <circle class="ring-bg" cx="110" cy="110" r="94"/>
+                  <circle
+                    class="ring-progress"
+                    cx="110"
+                    cy="110"
+                    r="94"
+                    stroke-dasharray="590.6"
+                    stroke-dashoffset="295.3"
+                  />
+                </svg>
+                <div class="ring-glow"></div>
+                <div class="ring-content">
+                  <div class="ring-percentage">50%</div>
+                  <div class="ring-label">今日进度</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">12.5</div>
+                <div class="stat-unit">克纯酒精</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">1.3</div>
+                <div class="stat-unit">标准杯</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">88</div>
+                <div class="stat-unit">千卡</div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+              <div class="section-label">快速录入</div>
+              <div class="action-grid">
+                <div class="action-btn">
+                  <div class="action-icon">🍷</div>
+                  <div class="action-label">葡萄酒</div>
+                </div>
+                <div class="action-btn">
+                  <div class="action-icon">🍺</div>
+                  <div class="action-label">啤酒</div>
+                </div>
+                <div class="action-btn">
+                  <div class="action-icon">🥃</div>
+                  <div class="action-label">白酒</div>
+                </div>
+                <div class="action-btn">
+                  <div class="action-icon">🍸</div>
+                  <div class="action-label">鸡尾酒</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone 2: With Records -->
+        <div class="phone">
+          <div class="phone-screen">
+            <svg width="0" height="0">
+              <defs>
+                <linearGradient id="ringGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#f97316"/>
+                  <stop offset="100%" style="stop-color:#f87171"/>
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <div class="app-header">
+              <div class="app-title">DrinkMate</div>
+              <div class="app-date">2026年4月20日 周日</div>
+            </div>
+
+            <div class="ring-container">
+              <div class="ring">
+                <svg viewBox="0 0 220 220" style="transform: rotate(-90deg)">
+                  <circle class="ring-bg" cx="110" cy="110" r="94"/>
+                  <circle
+                    class="ring-progress"
+                    cx="110"
+                    cy="110"
+                    r="94"
+                    stroke="url(#ringGradient2)"
+                    stroke-dasharray="590.6"
+                    stroke-dashoffset="118.1"
+                    style="filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.5))"
+                  />
+                </svg>
+                <div class="ring-glow" style="background: radial-gradient(circle, rgba(249, 115, 22, 0.2) 0%, transparent 70%);"></div>
+                <div class="ring-content">
+                  <div class="ring-percentage" style="background: linear-gradient(135deg, #f97316, #f87171); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">80%</div>
+                  <div class="ring-label">即将超量</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="records-section">
+              <div class="section-label" style="margin-bottom: 12px;">今日记录</div>
+
+              <div class="record-item">
+                <div class="record-icon">🍺</div>
+                <div class="record-info">
+                  <div class="record-name">青岛啤酒</div>
+                  <div class="record-detail">500ml · 14:30</div>
+                </div>
+                <div class="record-alcohol">
+                  <div class="record-amount">16g</div>
+                </div>
+              </div>
+
+              <div class="record-item">
+                <div class="record-icon">🍷</div>
+                <div class="record-info">
+                  <div class="record-name">赤霞珠红酒</div>
+                  <div class="record-detail">150ml · 12:00</div>
+                </div>
+                <div class="record-alcohol">
+                  <div class="record-amount">14.4g</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fab-button">
+              <svg class="fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+
+            <div class="bottom-nav">
+              <div class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span class="nav-label">首页</span>
+              </div>
+              <div class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="14" x2="23" y2="14"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="14" x2="4" y2="14"></line>
+                </svg>
+                <span class="nav-label">计算器</span>
+              </div>
+              <div class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span class="nav-label">指导</span>
+              </div>
+              <div class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span class="nav-label">设置</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Palette Section -->
+    <div class="section">
+      <h2 class="section-title">色彩系统</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="width: 100%; height: 60px; background: var(--bg-primary); border-radius: 8px; margin-bottom: 8px;"></div>
+          <div style="font-size: 12px; color: var(--text-secondary);">bg-primary</div>
+          <div style="font-size: 11px; color: var(--text-tertiary);">#0a0a0f</div>
+        </div>
+
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="width: 100%; height: 60px; background: var(--ring-gold); border-radius: 8px; margin-bottom: 8px;"></div>
+          <div style="font-size: 12px; color: var(--text-secondary);">ring-gold</div>
+          <div style="font-size: 11px; color: var(--text-tertiary);">#d4a853</div>
+        </div>
+
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="width: 100%; height: 60px; background: var(--ring-amber); border-radius: 8px; margin-bottom: 8px;"></div>
+          <div style="font-size: 12px; color: var(--text-secondary);">ring-amber</div>
+          <div style="font-size: 11px; color: var(--text-tertiary);">#fbbf24</div>
+        </div>
+
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="width: 100%; height: 60px; background: var(--ring-orange); border-radius: 8px; margin-bottom: 8px;"></div>
+          <div style="font-size: 12px; color: var(--text-secondary);">ring-orange</div>
+          <div style="font-size: 11px; color: var(--text-tertiary);">#f97316</div>
+        </div>
+
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="width: 100%; height: 60px; background: var(--ring-red); border-radius: 8px; margin-bottom: 8px;"></div>
+          <div style="font-size: 12px; color: var(--text-secondary);">ring-red</div>
+          <div style="font-size: 11px; color: var(--text-tertiary);">#f87171</div>
+        </div>
+
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="width: 100%; height: 60px; background: var(--bg-card); border-radius: 8px; margin-bottom: 8px;"></div>
+          <div style="font-size: 12px; color: var(--text-secondary);">bg-card</div>
+          <div style="font-size: 11px; color: var(--text-tertiary);">#1a1a24</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
