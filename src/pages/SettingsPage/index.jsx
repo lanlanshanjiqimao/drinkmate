@@ -78,12 +78,6 @@ export function SettingsPage() {
 
         <div className={styles.card}>
           <div className={styles.infoRow}>
-            <span className={styles.infoLabel}>性别</span>
-            <span className={styles.infoValue}>
-              {user.gender === 'male' ? '👨 男性' : '👩 女性'}
-            </span>
-          </div>
-          <div className={styles.infoRow}>
             <span className={styles.infoLabel}>每日上限</span>
             <span className={styles.infoValue}>{user.dailyLimit}g 纯酒精</span>
           </div>

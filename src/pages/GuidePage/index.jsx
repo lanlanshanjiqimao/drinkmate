@@ -18,20 +18,11 @@ export function GuidePage() {
 
         <div className={styles.cards}>
           <div className={styles.card}>
-            <div className={styles.cardIcon}>👨</div>
+            <div className={styles.cardIcon}>🍷</div>
             <div className={styles.cardContent}>
-              <h3>男性</h3>
-              <p className={styles.limit}>≤ 25g / 天</p>
-              <p className={styles.detail}>约 2.5 标准杯</p>
-            </div>
-          </div>
-
-          <div className={styles.card}>
-            <div className={styles.cardIcon}>👩</div>
-            <div className={styles.cardContent}>
-              <h3>女性</h3>
-              <p className={styles.limit}>≤ 15g / 天</p>
-              <p className={styles.detail}>约 1.5 标准杯</p>
+              <h3>安全上限</h3>
+              <p className={styles.limit}>≤ 50g / 天</p>
+              <p className={styles.detail}>约 5 标准杯</p>
             </div>
           </div>
         </div>

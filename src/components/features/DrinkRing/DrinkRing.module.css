@@ -1,9 +1,24 @@
-.container {
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ringArea {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   transform-origin: center;
+}
+
+.backdrop {
+  position: absolute;
+  width: 82%;
+  height: 82%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(26, 26, 36, 0.8) 0%, rgba(10, 10, 15, 0.4) 100%);
+  pointer-events: none;
 }
 
 .glow {
@@ -24,47 +39,44 @@
 .bgRing {
   fill: none;
   stroke: var(--ring-bg);
-  stroke-width: 16;
 }
 
 .progressRing {
   fill: none;
-  stroke-width: 16;
   stroke-linecap: round;
   transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.content {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+/* Info section below the ring */
+.info {
   text-align: center;
+  margin-top: 12px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
 }
 
 .percentage {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 700;
   line-height: 1;
-  background: linear-gradient(135deg, var(--ring-gold), var(--ring-amber));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: all 0.5s ease;
+  transition: color 0.5s ease;
 }
 
 .label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-top: 4px;
+  font-size: 14px;
   font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .amount {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-tertiary);
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 /* Animations */
@@ -79,21 +91,21 @@
   }
 }
 
-.container:hover .glow {
+.ringArea:hover .glow {
   animation: pulse 2s ease-in-out infinite;
 }
 
 /* Responsive */
 @media (max-width: 375px) {
   .percentage {
-    font-size: 40px;
+    font-size: 30px;
   }
 
   .label {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .amount {
-    font-size: 11px;
+    font-size: 12px;
   }
 }

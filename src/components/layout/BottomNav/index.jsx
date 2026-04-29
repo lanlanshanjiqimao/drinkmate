@@ -1,14 +1,15 @@
 import { Link, useLocation } from 'wouter';
+import { Home, PlusCircle, Calculator, Settings } from 'lucide-react';
 import styles from './BottomNav.module.css';
 
 export function BottomNav() {
   const [location] = useLocation();
 
   const navItems = [
-    { path: '/', label: '首页', icon: '🏠' },
-    { path: '/add', label: '记酒', icon: '➕' },
-    { path: '/calculator', label: '计算', icon: '📊' },
-    { path: '/settings', label: '设置', icon: '⚙️' },
+    { path: '/', label: '首页', Icon: Home },
+    { path: '/add', label: '记酒', Icon: PlusCircle },
+    { path: '/calculator', label: '计算', Icon: Calculator },
+    { path: '/settings', label: '设置', Icon: Settings },
   ];
 
   return (
@@ -19,7 +20,7 @@ export function BottomNav() {
           href={item.path}
           className={`${styles.navItem} ${location === item.path ? styles.active : ''}`}
         >
-          <span className={styles.icon}>{item.icon}</span>
+          <item.Icon size={22} className={styles.icon} />
           <span className={styles.label}>{item.label}</span>
         </Link>
       ))}

@@ -1,8 +1,7 @@
-/** User Store - Zustand Store for User Settings */
-
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from '../utils/constants';
 
-// 简化版，移除TypeScript类型和持久化
 const defaultPreferences = {
   showCalories: true,
   showStandardDrinks: true,
@@ -11,50 +10,38 @@ const defaultPreferences = {
 };
 
 const defaultState = {
-  gender: 'male',
-  dailyLimit: 25,
-  hasCompletedOnboarding: false,
+  dailyLimit: 50,
   preferences: { ...defaultPreferences },
 };
 
 export const useUserStore = create(
-  (set, get) => ({
-    ...defaultState,
+  persist(
+    (set, get) => ({
+      ...defaultState,
 
-    setGender: (gender) => {
-      const dailyLimit = gender === 'male' ? 25 : 15;
-      set({
-        gender,
-        dailyLimit,
-      });
-    },
+      updatePreferences: (prefs) => {
+        set((state) => ({
+          preferences: { ...state.preferences, ...prefs },
+        }));
+      },
 
-    completeOnboarding: () => {
-      set({ hasCompletedOnboarding: true });
-    },
+      resetSettings: () => {
+        set({ ...defaultState });
+      },
 
-    updatePreferences: (prefs) => {
-      set((state) => ({
-        preferences: { ...state.preferences, ...prefs },
-      }));
-    },
-
-    resetSettings: () => {
-      set({
-        ...defaultState,
-        hasCompletedOnboarding: get().hasCompletedOnboarding,
-      });
-    },
-
-    importUserData: (data) => {
-      set((state) => ({
-        ...state,
-        ...data,
-        preferences: {
-          ...state.preferences,
-          ...data.preferences,
-        },
-      }));
-    },
-  })
+      importUserData: (data) => {
+        set((state) => ({
+          ...state,
+          ...data,
+          preferences: {
+            ...state.preferences,
+            ...data.preferences,
+          },
+        }));
+      },
+    }),
+    {
+      name: STORAGE_KEYS.USER_SETTINGS,
+    }
+  )
 );

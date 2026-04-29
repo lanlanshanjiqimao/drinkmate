@@ -26,6 +26,65 @@
   display: flex;
   justify-content: center;
   margin-bottom: 24px;
+  padding: 32px 0;
+  background: radial-gradient(circle at center, rgba(26, 26, 36, 0.6) 0%, transparent 70%);
+  border-radius: 24px;
+}
+
+/* Dynamic Tip Card */
+.tipCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 20px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.safe {
+  background: rgba(212, 168, 83, 0.08);
+  border: 1px solid rgba(212, 168, 83, 0.15);
+}
+
+.warning {
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.15);
+}
+
+.critical {
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.15);
+}
+
+.danger {
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.15);
+}
+
+.tipText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.danger .tipText {
+  color: var(--ring-red);
+}
+
+.critical .tipText {
+  color: var(--ring-orange);
+}
+
+.warning .tipText {
+  color: var(--ring-amber);
+}
+
+.tipRemaining {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
 }
 
 /* Stats Section */
@@ -83,8 +142,8 @@
 
 .actionGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
 .actionBtn {
@@ -217,8 +276,23 @@
   display: block;
   font-size: 15px;
   font-weight: 600;
-  color: var(--ring-gold);
   margin-bottom: 4px;
+}
+
+.alcoholLight {
+  color: var(--status-success);
+}
+
+.alcoholMedium {
+  color: var(--ring-gold);
+}
+
+.alcoholHeavy {
+  color: var(--ring-amber);
+}
+
+.alcoholExtreme {
+  color: var(--ring-red);
 }
 
 .deleteBtn {
@@ -287,6 +361,10 @@
 
   .actionGrid {
     gap: 8px;
+  }
+
+  .actionBtn {
+    padding: 10px 4px;
   }
 
   .actionBtn {

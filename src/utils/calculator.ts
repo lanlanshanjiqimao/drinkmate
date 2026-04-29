@@ -51,14 +51,14 @@ export const calculatePercentage = (current: number, limit: number): number => {
  * Get ring color based on percentage
  */
 export const getRingColor = (percentage: number): { color: string; glow: string; status: string } => {
-  if (percentage <= 50) {
+  if (percentage <= 40) {
     return {
       color: 'var(--ring-gold)',
       glow: 'var(--ring-gold-glow)',
       status: 'safe',
     };
   }
-  if (percentage <= 80) {
+  if (percentage <= 70) {
     return {
       color: 'var(--ring-amber)',
       glow: 'var(--ring-amber-glow)',
@@ -98,9 +98,9 @@ export const formatPercentage = (value: number, decimals: number = 0): string =>
  */
 export const DRINK_REFERENCE_TABLE = [
   { type: 'wine', name: '葡萄酒', abv: 12, volume: 150, drinks: 1.4 },
-  { type: 'beer', name: '啤酒', abv: 4, volume: 250, drinks: 0.8 },
+  { type: 'beer', name: '啤酒', abv: 4, volume: 100, drinks: 0.32 },
   { type: 'spirit', name: '白酒', abv: 52, volume: 25, drinks: 1.0 },
   { type: 'cocktail', name: '鸡尾酒', abv: 15, volume: 70, drinks: 0.7 },
   { type: 'sake', name: '清酒', abv: 15, volume: 70, drinks: 0.7 },
-  { type: 'whiskey', name: '威士忌', abv: 40, volume: 30, drinks: 0.9 },
+  { type: 'whiskey', name: '威士忌', abv: 40, volume: 50, drinks: 1.6 },
 ] as const;

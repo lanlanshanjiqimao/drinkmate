@@ -73,7 +73,7 @@ export function OnboardingPage() {
             >
               <span className={styles.genderIcon}>👨</span>
               <span className={styles.genderLabel}>男性</span>
-              <span className={styles.genderLimit}>每日上限 25g</span>
+              <span className={styles.genderLimit}>每日上限 50g</span>
             </button>
 
             <button
@@ -84,7 +84,7 @@ export function OnboardingPage() {
             >
               <span className={styles.genderIcon}>👩</span>
               <span className={styles.genderLabel}>女性</span>
-              <span className={styles.genderLimit}>每日上限 15g</span>
+              <span className={styles.genderLimit}>每日上限 30g</span>
             </button>
           </div>
         </div>

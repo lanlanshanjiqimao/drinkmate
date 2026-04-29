@@ -3,11 +3,8 @@
 /** App Version */
 export const APP_VERSION = '1.0.0';
 
-/** Daily Limits (grams of pure alcohol) */
-export const DAILY_LIMITS = {
-  male: 25,
-  female: 15,
-} as const;
+/** Daily Limit (grams of pure alcohol) */
+export const DAILY_LIMIT = 50 as const;
 
 /** Alcohol Density (g/ml) */
 export const ALCOHOL_DENSITY = 0.8;
@@ -40,7 +37,7 @@ export const DRINK_PRESETS = [
     type: 'beer' as const,
     icon: '🍺',
     defaultName: '啤酒',
-    defaultVolume: 500,
+    defaultVolume: 100,
     defaultAbv: 4,
     color: '#e8a838',
   },
@@ -72,7 +69,7 @@ export const DRINK_PRESETS = [
     type: 'whiskey' as const,
     icon: '🥃',
     defaultName: '威士忌',
-    defaultVolume: 45,
+    defaultVolume: 50,
     defaultAbv: 40,
     color: '#cd853f',
   },
@@ -82,8 +79,7 @@ export const DRINK_PRESETS = [
 export const GUIDE_CARDS = {
   moderation: {
     title: '🟢 适度标准',
-    content: `男性每日 ≤ 25g 纯酒精 (约 2.5 标准杯)
-女性每日 ≤ 15g 纯酒精 (约 1.5 标准杯)
+    content: `每日 ≤ 50g 纯酒精 (约 5 标准杯)
 
 每周建议至少有 2-3 天完全不饮酒，
 给肝脏足够的代谢和恢复时间。`,
@@ -110,9 +106,11 @@ export const GUIDE_CARDS = {
 
 /** Dynamic Tips by Progress */
 export const DYNAMIC_TIPS = [
-  { max: 0, message: '今日尚未饮酒，保持清醒也是好选择' },
-  { max: 50, message: '适量范围，继续保持' },
-  { max: 80, message: '接近上限，请注意控制' },
-  { max: 100, message: '即将达到上限，建议停止' },
-  { max: Infinity, message: '已超安全上限，请立即停止饮酒' },
+  { max: 0, message: '今天还没喝呢，清清爽爽也不错' },
+  { max: 40, message: '微醺刚好，享受当下' },
+  { max: 70, message: '渐入佳境，记得喝杯水' },
+  { max: 90, message: '快到上限了，下一杯不如明天再喝' },
+  { max: 100, message: '今日额度将满，适可而止吧' },
+  { max: 150, message: '已超过建议上限，今晚就此打住' },
+  { max: Infinity, message: '严重超标！请立即停止饮酒，注意安全' },
 ];

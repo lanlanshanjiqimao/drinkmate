@@ -66,6 +66,16 @@ body {
   --ring-bg: rgba(255, 255, 255, 0.08);
   --ring-complete: #10b981;
 
+  /* Multi-ring Loop Colors */
+  --ring-loop-1: #d4a853;
+  --ring-loop-1-glow: rgba(212, 168, 83, 0.4);
+  --ring-loop-2: #f472b6;
+  --ring-loop-2-glow: rgba(244, 114, 182, 0.4);
+  --ring-loop-3: #a78bfa;
+  --ring-loop-3-glow: rgba(167, 139, 250, 0.4);
+  --ring-loop-4: #ef4444;
+  --ring-loop-4-glow: rgba(239, 68, 68, 0.4);
+
   /* Brand Colors */
   --accent-wine: #8b3a5d;
   --accent-beer: #e8a838;

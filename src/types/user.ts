@@ -1,16 +1,9 @@
 /** User Types */
 
-/** 性别类型 */
-export type Gender = 'male' | 'female';
-
 /** 用户设置 */
 export interface UserSettings {
-  /** 性别 */
-  gender: Gender;
   /** 每日安全上限（g 纯酒精） */
   dailyLimit: number;
-  /** 是否已完成首次引导 */
-  hasCompletedOnboarding: boolean;
 }
 
 /** 用户偏好 */

@@ -3,16 +3,8 @@ import { Link, useLocation } from 'wouter';
 import { ChevronLeft, Plus, Minus } from 'lucide-react';
 import { useDrinkStore, useUserStore } from '../../stores';
 import { calculatePureAlcohol } from '../../utils/calculator';
+import { DRINK_PRESETS } from '../../utils/constants';
 import styles from './AddPage.module.css';
-
-const DRINK_TYPES = [
-  { type: 'wine', name: '葡萄酒', icon: '🍷', defaultVolume: 150, defaultAbv: 12 },
-  { type: 'beer', name: '啤酒', icon: '🍺', defaultVolume: 500, defaultAbv: 4 },
-  { type: 'spirit', name: '白酒', icon: '🥃', defaultVolume: 50, defaultAbv: 52 },
-  { type: 'cocktail', name: '鸡尾酒', icon: '🍸', defaultVolume: 100, defaultAbv: 15 },
-  { type: 'sake', name: '清酒', icon: '🍶', defaultVolume: 100, defaultAbv: 15 },
-  { type: 'whiskey', name: '威士忌', icon: '🥃', defaultVolume: 45, defaultAbv: 40 },
-];
 
 export function AddPage() {
   const [, navigate] = useLocation();
@@ -22,9 +14,9 @@ export function AddPage() {
   );
 
   const [selectedType, setSelectedType] = useState(
-    DRINK_TYPES.find((t) => t.type === defaultDrinkType) || DRINK_TYPES[1]
+    DRINK_PRESETS.find((t) => t.type === defaultDrinkType) || DRINK_PRESETS[1]
   );
-  const [name, setName] = useState(selectedType.name);
+  const [name, setName] = useState(selectedType.defaultName);
   const [volume, setVolume] = useState(selectedType.defaultVolume);
   const [abv, setAbv] = useState(selectedType.defaultAbv);
 
@@ -32,7 +24,7 @@ export function AddPage() {
 
   const handleTypeSelect = (type) => {
     setSelectedType(type);
-    setName(type.name);
+    setName(type.defaultName);
     setVolume(type.defaultVolume);
     setAbv(type.defaultAbv);
   };
@@ -73,7 +65,7 @@ export function AddPage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>选择饮品类型</h2>
           <div className={styles.typeGrid}>
-            {DRINK_TYPES.map((type) => (
+            {DRINK_PRESETS.map((type) => (
               <button
                 key={type.type}
                 type="button"
@@ -83,7 +75,7 @@ export function AddPage() {
                 onClick={() => handleTypeSelect(type)}
               >
                 <span className={styles.typeIcon}>{type.icon}</span>
-                <span className={styles.typeName}>{type.name}</span>
+                <span className={styles.typeName}>{type.defaultName}</span>
               </button>
             ))}
           </div>

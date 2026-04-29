@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'wouter';
 import { Plus, Trash2 } from 'lucide-react';
 import { DrinkRing } from '../../components/features/DrinkRing';
 import { useDrinkStore, useUserStore } from '../../stores';
+import { DRINK_PRESETS, DYNAMIC_TIPS } from '../../utils/constants';
 import { getDrinkIcon, formatPureAlcohol, formatTime } from '../../utils/formatter';
+import { getRingColor } from '../../utils/calculator';
 import styles from './HomePage.module.css';
 
 export function HomePage() {
@@ -15,28 +17,42 @@ export function HomePage() {
   const dailyLimit = useUserStore((state) => state.dailyLimit);
   const preferences = useUserStore((state) => state.preferences);
 
-  // 计算今日统计，基于 records 派生
-  const todayStats = (() => {
-    const totalAlcohol = records.reduce(
-      (sum, record) => sum + record.pureAlcohol,
-      0
-    );
-    const percentage = Math.min((totalAlcohol / dailyLimit) * 100, 100);
-    let color = 'var(--ring-gold)', status = 'safe';
-    if (percentage > 80) { color = 'var(--ring-red)'; status = 'danger'; }
-    else if (percentage > 60) { color = 'var(--ring-orange)'; status = 'critical'; }
-    else if (percentage > 40) { color = 'var(--ring-amber)'; status = 'warning'; }
+  const todayRecords = useMemo(() => {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const endOfDay = startOfDay + 86400000;
+    return records.filter((r) => {
+      const ts = new Date(r.timestamp).getTime();
+      return ts >= startOfDay && ts < endOfDay;
+    });
+  }, [records]);
+
+  const todayStats = useMemo(() => {
+    const totalAlcohol = todayRecords.reduce((sum, r) => sum + r.pureAlcohol, 0);
+    const percentage = (totalAlcohol / dailyLimit) * 100;
+    const { color, glow, status } = getRingColor(percentage);
     return {
       totalAlcohol,
-      standardDrinks: totalAlcohol / 14,
+      standardDrinks: totalAlcohol / 10,
       calories: totalAlcohol * 7,
       percentage,
-      recordCount: records.length,
+      recordCount: todayRecords.length,
       isOverLimit: percentage > 100,
       ringColor: color,
+      ringGlow: glow,
       status,
     };
-  })();
+  }, [todayRecords, dailyLimit]);
+
+  const dynamicTip = DYNAMIC_TIPS.find((tip) => todayStats.percentage <= tip.max);
+  const remaining = Math.max(0, dailyLimit - todayStats.totalAlcohol);
+
+  const getAlcoholLevel = (pureAlcohol) => {
+    if (pureAlcohol >= 25) return styles.alcoholExtreme;
+    if (pureAlcohol >= 15) return styles.alcoholHeavy;
+    if (pureAlcohol >= 8) return styles.alcoholMedium;
+    return styles.alcoholLight;
+  };
 
   const handleDelete = (id) => {
     if (showDeleteConfirm === id) {
@@ -48,17 +64,9 @@ export function HomePage() {
     }
   };
 
-  // 快速添加处理
-  const handleQuickAdd = (type) => {
-    const presets = {
-      wine: { defaultName: '葡萄酒', defaultVolume: 150, defaultAbv: 12 },
-      beer: { defaultName: '啤酒', defaultVolume: 500, defaultAbv: 4 },
-      spirit: { defaultName: '白酒', defaultVolume: 50, defaultAbv: 52 },
-      cocktail: { defaultName: '鸡尾酒', defaultVolume: 100, defaultAbv: 15 },
-    };
-    const preset = presets[type];
+  const handleQuickAdd = (preset) => {
     addRecord({
-      type,
+      type: preset.type,
       name: preset.defaultName,
       volume: preset.defaultVolume,
       abv: preset.defaultAbv,
@@ -92,15 +100,16 @@ export function HomePage() {
         />
       </section>
 
+      {/* Dynamic Tip */}
+      <section className={`${styles.tipCard} ${styles[todayStats.status]}`}>
+        <p className={styles.tipText}>{dynamicTip?.message}</p>
+        {remaining > 0 && !todayStats.isOverLimit && (
+          <p className={styles.tipRemaining}>还可摄入 {remaining.toFixed(1)}g 纯酒精</p>
+        )}
+      </section>
+
       {/* Stats Cards */}
       <section className={styles.statsSection}>
-        <div className={styles.statCard}>
-          <div className={styles.statValue}>
-            {todayStats.totalAlcohol.toFixed(1)}
-          </div>
-          <div className={styles.statLabel}>克纯酒精</div>
-        </div>
-
         {preferences.showStandardDrinks && (
           <div className={styles.statCard}>
             <div className={styles.statValue}>
@@ -124,38 +133,17 @@ export function HomePage() {
       <section className={styles.quickActions}>
         <h3 className={styles.sectionTitle}>快速录入</h3>
         <div className={styles.actionGrid}>
-          <button
-            className={styles.actionBtn}
-            onClick={() => handleQuickAdd('wine')}
-            aria-label="快速添加葡萄酒"
-          >
-            <span className={styles.actionIcon}>🍷</span>
-            <span className={styles.actionLabel}>葡萄酒</span>
-          </button>
-          <button
-            className={styles.actionBtn}
-            onClick={() => handleQuickAdd('beer')}
-            aria-label="快速添加啤酒"
-          >
-            <span className={styles.actionIcon}>🍺</span>
-            <span className={styles.actionLabel}>啤酒</span>
-          </button>
-          <button
-            className={styles.actionBtn}
-            onClick={() => handleQuickAdd('spirit')}
-            aria-label="快速添加白酒"
-          >
-            <span className={styles.actionIcon}>🥃</span>
-            <span className={styles.actionLabel}>白酒</span>
-          </button>
-          <button
-            className={styles.actionBtn}
-            onClick={() => handleQuickAdd('cocktail')}
-            aria-label="快速添加鸡尾酒"
-          >
-            <span className={styles.actionIcon}>🍸</span>
-            <span className={styles.actionLabel}>鸡尾酒</span>
-          </button>
+          {DRINK_PRESETS.map((preset) => (
+            <button
+              key={preset.type}
+              className={styles.actionBtn}
+              onClick={() => handleQuickAdd(preset)}
+              aria-label={`快速添加${preset.defaultName}`}
+            >
+              <span className={styles.actionIcon}>{preset.icon}</span>
+              <span className={styles.actionLabel}>{preset.defaultName} {preset.defaultVolume}ml</span>
+            </button>
+          ))}
         </div>
       </section>
 
@@ -163,17 +151,17 @@ export function HomePage() {
       <section className={styles.recordsSection}>
         <div className={styles.recordsHeader}>
           <h3 className={styles.sectionTitle}>今日记录</h3>
-          <span className={styles.recordCount}>{records.length} 条</span>
+          <span className={styles.recordCount}>{todayRecords.length} 条</span>
         </div>
 
-        {records.length === 0 ? (
+        {todayRecords.length === 0 ? (
           <div className={styles.emptyState}>
             <p>还没有饮酒记录</p>
             <p className={styles.emptyHint}>点击右下角 + 开始记录</p>
           </div>
         ) : (
           <div className={styles.recordsList}>
-            {[...records].reverse().map((record) => (
+            {[...todayRecords].reverse().map((record) => (
               <div key={record.id} className={styles.recordItem}>
                 <div className={styles.recordIcon}>
                   {getDrinkIcon(record.type)}
@@ -185,7 +173,7 @@ export function HomePage() {
                   </div>
                 </div>
                 <div className={styles.recordAlcohol}>
-                  <span className={styles.alcoholAmount}>
+                  <span className={`${styles.alcoholAmount} ${getAlcoholLevel(record.pureAlcohol)}`}>
                     {formatPureAlcohol(record.pureAlcohol)}
                   </span>
                   <button

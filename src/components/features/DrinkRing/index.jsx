@@ -1,15 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { getRingColor } from '../../../utils/calculator.ts';
 import styles from './DrinkRing.module.css';
 
-const RADIUS = 94;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+const BASE_RADIUS = 90;
+const RING_GAP = 18;
+const STROKE_WIDTH = 14;
+const MAX_RINGS = 4;
+
+const LOOP_COLORS = [
+  { stroke: 'var(--ring-loop-1)', glow: 'var(--ring-loop-1-glow)' },
+  { stroke: 'var(--ring-loop-2)', glow: 'var(--ring-loop-2-glow)' },
+  { stroke: 'var(--ring-loop-3)', glow: 'var(--ring-loop-3-glow)' },
+  { stroke: 'var(--ring-loop-4)', glow: 'var(--ring-loop-4-glow)' },
+];
+
+function getLoopColor(index) {
+  return LOOP_COLORS[Math.min(index, LOOP_COLORS.length - 1)];
+}
+
+function getRadius(loopIndex) {
+  return BASE_RADIUS - loopIndex * RING_GAP;
+}
+
+function getCircumference(loopIndex) {
+  return 2 * Math.PI * getRadius(loopIndex);
+}
 
 export function DrinkRing({ percentage, currentAmount, dailyLimit, size = 220 }) {
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
-
-  const { color, glow, status } = getRingColor(percentage);
-  const offset = CIRCUMFERENCE - (Math.min(animatedPercentage, 100) / 100) * CIRCUMFERENCE;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,16 +36,45 @@ export function DrinkRing({ percentage, currentAmount, dailyLimit, size = 220 })
     return () => clearTimeout(timer);
   }, [percentage]);
 
+  const { color, glow, status } = getRingColor(animatedPercentage);
   const scale = size / 220;
+
+  const rings = useMemo(() => {
+    if (animatedPercentage <= 0) return [];
+
+    const totalLoops = Math.ceil(animatedPercentage / 100);
+    const result = [];
+
+    for (let i = 0; i < Math.min(totalLoops, MAX_RINGS); i++) {
+      const loopStart = i * 100;
+      const loopEnd = Math.min(animatedPercentage, (i + 1) * 100);
+      const progress = loopEnd - loopStart;
+      const radius = getRadius(i);
+      const circumference = getCircumference(i);
+      const offset = circumference - (progress / 100) * circumference;
+      const loopColor = getLoopColor(i);
+
+      result.push({
+        index: i,
+        radius,
+        circumference,
+        offset,
+        progress,
+        ...loopColor,
+      });
+    }
+
+    return result;
+  }, [animatedPercentage]);
 
   const getStatusText = () => {
     switch (status) {
       case 'safe':
-        return '适量范围';
+        return '微醺刚好';
       case 'warning':
-        return '接近上限';
+        return '渐入佳境';
       case 'critical':
-        return '即将超量';
+        return '接近上限';
       case 'danger':
         return '已超量';
       default:
@@ -36,59 +83,64 @@ export function DrinkRing({ percentage, currentAmount, dailyLimit, size = 220 })
   };
 
   return (
-    <div
-      className={styles.container}
-      style={{
-        width: size,
-        height: size,
-        transform: `scale(${scale})`,
-      }}
-    >
+    <div className={styles.wrapper} style={{ width: size }}>
       <div
-        className={styles.glow}
+        className={styles.ringArea}
         style={{
-          background: `radial-gradient(circle, ${glow} 0%, transparent 70%)`,
+          width: size,
+          height: size,
+          transform: `scale(${scale})`,
         }}
-      />
+      >
+        <div className={styles.backdrop} />
 
-      <svg className={styles.ring} viewBox="0 0 220 220">
-        <defs>
-          <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: color }} />
-            <stop offset="100%" style={{ stopColor: color }} />
-          </linearGradient>
-        </defs>
-
-        <circle
-          className={styles.bgRing}
-          cx="110"
-          cy="110"
-          r={RADIUS}
-        />
-
-        <circle
-          className={styles.progressRing}
-          cx="110"
-          cy="110"
-          r={RADIUS}
+        <div
+          className={styles.glow}
           style={{
-            strokeDasharray: CIRCUMFERENCE,
-            strokeDashoffset: offset,
-            stroke: percentage > 0 ? 'url(#ringGradient)' : 'transparent',
-            filter: `drop-shadow(0 0 8px ${glow})`,
+            background: `radial-gradient(circle, ${glow} 0%, transparent 70%)`,
           }}
         />
-      </svg>
 
-      <div className={styles.content}>
-        <div
-          className={styles.percentage}
-          style={{ color }}
-        >
-          {Math.round(percentage)}%
-        </div>
-        <div className={styles.label}>
-          {getStatusText()}
+        <svg className={styles.ring} viewBox="0 0 220 220">
+          {rings.map((ring) => (
+            <circle
+              key={`bg-${ring.index}`}
+              className={styles.bgRing}
+              cx="110"
+              cy="110"
+              r={ring.radius}
+              style={{ strokeWidth: STROKE_WIDTH }}
+            />
+          ))}
+
+          {rings.map((ring) => (
+            <circle
+              key={`progress-${ring.index}`}
+              className={styles.progressRing}
+              cx="110"
+              cy="110"
+              r={ring.radius}
+              style={{
+                strokeWidth: STROKE_WIDTH,
+                strokeDasharray: ring.circumference,
+                strokeDashoffset: ring.offset,
+                stroke: ring.stroke,
+                filter: `drop-shadow(0 0 6px ${ring.glow})`,
+              }}
+            />
+          ))}
+        </svg>
+      </div>
+
+      <div className={styles.info}>
+        <div className={styles.infoRow}>
+          <span
+            className={styles.percentage}
+            style={{ color }}
+          >
+            {Math.round(animatedPercentage)}%
+          </span>
+          <span className={styles.label}>{getStatusText()}</span>
         </div>
         <div className={styles.amount}>
           {currentAmount.toFixed(1)}g / {dailyLimit}g

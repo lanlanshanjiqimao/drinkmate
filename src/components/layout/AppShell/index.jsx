@@ -6,7 +6,7 @@ export function AppShell({ children }) {
   const [location] = useLocation();
 
   // 这些页面隐藏底部导航
-  const hideNavPaths = ['/onboarding', '/add'];
+  const hideNavPaths = ['/add'];
   const showNav = !hideNavPaths.some(path => location.startsWith(path));
 
   return (
