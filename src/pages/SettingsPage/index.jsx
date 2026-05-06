@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
-import { ChevronLeft, User, Bell, Database, Trash2, Download, Upload, Info } from 'lucide-react';
-import { useUserStore, useDrinkStore } from '../../stores';
+import { ChevronLeft, User, Bell, Database, Trash2, Download, Upload, Info, LogOut } from 'lucide-react';
+import { useUserStore, useDrinkStore, useAuthStore } from '../../stores';
 import { exportData, importData } from '../../utils/storage';
 import styles from './SettingsPage.module.css';
 
@@ -11,7 +11,8 @@ export function SettingsPage() {
 
   const user = useUserStore();
   const records = useDrinkStore((state) => state.records);
-  const clearAllRecords = useDrinkStore((state) => state.clearTodayRecords);
+  const currentUser = useAuthStore((s) => s.currentUser);
+  const logout = useAuthStore((s) => s.logout);
 
   const handleExport = () => {
     const data = exportData();
@@ -50,12 +51,20 @@ export function SettingsPage() {
 
   const handleReset = () => {
     if (showResetConfirm) {
-      localStorage.clear();
-      window.location.reload();
+      useDrinkStore.persist.clearStorage();
+      useUserStore.persist.clearStorage();
+      useDrinkStore.persist.rehydrate();
+      useUserStore.persist.rehydrate();
     } else {
       setShowResetConfirm(true);
       setTimeout(() => setShowResetConfirm(false), 3000);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    useDrinkStore.persist.rehydrate();
+    useUserStore.persist.rehydrate();
   };
 
   return (
@@ -77,6 +86,10 @@ export function SettingsPage() {
         </h2>
 
         <div className={styles.card}>
+          <div className={styles.infoRow}>
+            <span className={styles.infoLabel}>当前用户</span>
+            <span className={styles.infoValue}>{currentUser}</span>
+          </div>
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>每日上限</span>
             <span className={styles.infoValue}>{user.dailyLimit}g 纯酒精</span>
@@ -156,6 +169,21 @@ export function SettingsPage() {
               {importStatus.message}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Account Section */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>
+          <LogOut size={18} />
+          账户
+        </h2>
+
+        <div className={styles.card}>
+          <button className={styles.actionRow} onClick={handleLogout}>
+            <LogOut size={20} />
+            <span>退出登录</span>
+          </button>
         </div>
       </section>
 

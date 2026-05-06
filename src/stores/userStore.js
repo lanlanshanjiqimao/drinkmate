@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { STORAGE_KEYS } from '../utils/constants';
+import { createUserStorage } from '../utils/userStorage';
 
 const defaultPreferences = {
   showCalories: true,
@@ -9,7 +10,7 @@ const defaultPreferences = {
   reminderEnabled: false,
 };
 
-const defaultState = {
+export const DEFAULT_USER_DATA = {
   dailyLimit: 50,
   preferences: { ...defaultPreferences },
 };
@@ -17,7 +18,7 @@ const defaultState = {
 export const useUserStore = create(
   persist(
     (set, get) => ({
-      ...defaultState,
+      ...DEFAULT_USER_DATA,
 
       updatePreferences: (prefs) => {
         set((state) => ({
@@ -26,7 +27,7 @@ export const useUserStore = create(
       },
 
       resetSettings: () => {
-        set({ ...defaultState });
+        set({ ...DEFAULT_USER_DATA });
       },
 
       importUserData: (data) => {
@@ -42,6 +43,14 @@ export const useUserStore = create(
     }),
     {
       name: STORAGE_KEYS.USER_SETTINGS,
+      storage: createUserStorage(),
+      skipHydration: true,
+      merge: (persistedState, currentState) => {
+        if (persistedState) {
+          return { ...currentState, ...persistedState };
+        }
+        return { ...currentState, ...DEFAULT_USER_DATA };
+      },
     }
   )
 );

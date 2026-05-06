@@ -1,6 +1,8 @@
 /** Storage - localStorage Management Utilities */
 
 import { STORAGE_KEYS, APP_VERSION } from './constants';
+import { useDrinkStore } from '../stores/drinkStore';
+import { useUserStore } from '../stores/userStore';
 
 /** Storage error class */
 export class StorageError extends Error {
@@ -68,12 +70,16 @@ export function clearAllStorage(): void {
 
 /** Export data as JSON string */
 export function exportData(): string {
+  const drinkState = useDrinkStore.getState();
+  const userState = useUserStore.getState();
   const data = {
     version: APP_VERSION,
     timestamp: new Date().toISOString(),
-    records: getStorageItem(STORAGE_KEYS.RECORDS, []),
-    settings: getStorageItem(STORAGE_KEYS.USER_SETTINGS, null),
-    preferences: getStorageItem(STORAGE_KEYS.USER_PREFERENCES, null),
+    records: drinkState.records,
+    settings: {
+      dailyLimit: userState.dailyLimit,
+      preferences: userState.preferences,
+    },
   };
   return JSON.stringify(data, null, 2);
 }
@@ -83,20 +89,14 @@ export function importData(jsonString: string): boolean {
   try {
     const data = JSON.parse(jsonString);
 
-    // Validate data structure
     if (!data.records || !Array.isArray(data.records)) {
       throw new Error('Invalid data format: records missing');
     }
 
-    // Import data
-    setStorageItem(STORAGE_KEYS.RECORDS, data.records);
+    useDrinkStore.getState().importRecords(data.records);
 
     if (data.settings) {
-      setStorageItem(STORAGE_KEYS.USER_SETTINGS, data.settings);
-    }
-
-    if (data.preferences) {
-      setStorageItem(STORAGE_KEYS.USER_PREFERENCES, data.preferences);
+      useUserStore.getState().importUserData(data.settings);
     }
 
     return true;

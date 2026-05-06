@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'wouter';
 import { Plus, Trash2 } from 'lucide-react';
 import { DrinkRing } from '../../components/features/DrinkRing';
-import { useDrinkStore, useUserStore } from '../../stores';
+import { useDrinkStore, useUserStore, useAuthStore } from '../../stores';
 import { DRINK_PRESETS, DYNAMIC_TIPS } from '../../utils/constants';
 import { getDrinkIcon, formatPureAlcohol, formatTime } from '../../utils/formatter';
 import { getRingColor } from '../../utils/calculator';
@@ -16,6 +16,7 @@ export function HomePage() {
   const addRecord = useDrinkStore((state) => state.addRecord);
   const dailyLimit = useUserStore((state) => state.dailyLimit);
   const preferences = useUserStore((state) => state.preferences);
+  const currentUser = useAuthStore((s) => s.currentUser);
 
   const todayRecords = useMemo(() => {
     const now = new Date();
@@ -87,7 +88,7 @@ export function HomePage() {
       {/* Header */}
       <header className={styles.header}>
         <h1 className={styles.title}>DrinkMate</h1>
-        <p className={styles.date}>{dateStr}</p>
+        <p className={styles.date}>{dateStr} · {currentUser}</p>
       </header>
 
       {/* Ring Section */}

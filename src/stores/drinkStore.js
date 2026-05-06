@@ -2,11 +2,14 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { STORAGE_KEYS, DAILY_LIMIT } from '../utils/constants';
 import { getRingColor } from '../utils/calculator';
+import { createUserStorage } from '../utils/userStorage';
+
+export const DEFAULT_DRINK_DATA = { records: [] };
 
 export const useDrinkStore = create(
   persist(
     (set, get) => ({
-      records: [],
+      ...DEFAULT_DRINK_DATA,
 
       getTodayRecords: () => {
         const today = new Date();
@@ -80,6 +83,14 @@ export const useDrinkStore = create(
     }),
     {
       name: STORAGE_KEYS.RECORDS,
+      storage: createUserStorage(),
+      skipHydration: true,
+      merge: (persistedState, currentState) => {
+        if (persistedState) {
+          return { ...currentState, ...persistedState };
+        }
+        return { ...currentState, ...DEFAULT_DRINK_DATA };
+      },
     }
   )
 );

@@ -21,6 +21,7 @@ export const STORAGE_KEYS = {
   USER_SETTINGS: 'drinkmate_user_settings_v1',
   USER_PREFERENCES: 'drinkmate_user_preferences_v1',
   APP_VERSION: 'drinkmate_version',
+  AUTH: 'drinkmate_auth_v1',
 } as const;
 
 /** Drink Presets */
